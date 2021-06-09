@@ -117,7 +117,6 @@ public class Screen extends JFrame {
     public void addPokemon(Pokemon p){
         pokemons.add(p);
         refreshPokemonList();
-
     }
 
     public static void main(String[] args) {
@@ -136,7 +135,6 @@ public class Screen extends JFrame {
         screen.addPokemon(charizard);
         screen.addPokemon(Jigllypuff);
         screen.addPokemon(magikarp);
-
     }
 
 
