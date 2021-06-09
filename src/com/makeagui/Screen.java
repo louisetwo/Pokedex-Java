@@ -1,10 +1,15 @@
 package com.makeagui;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -21,8 +26,12 @@ public class Screen extends JFrame {
     private JTextField textDateOfCatch;
     private JLabel labelTime;
     private JPanel panelMain;
+    private JButton buttonDelete;
+    private JLabel labelPokeball;
+    private JLabel labelPokemonImage;
     private ArrayList<Pokemon> pokemons;
     private  DefaultListModel listPokemonModel;
+    private String pokedexImagesUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
 
 
 
@@ -30,12 +39,14 @@ public class Screen extends JFrame {
         super("My pokedex owo ");  // Contrutor do Jframe quer o titulo para o que queremos na janela
         this.setContentPane(this.panelMain);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // O que o programa faz quando clica no iconde de fechar janela - Sair quando clicar
-        this.pack();
         pokemons = new ArrayList<Pokemon>();  // Initialize arraylist in constructor
         listPokemonModel = new DefaultListModel();
         listPokemon.setModel(listPokemonModel);
         buttonSave.setEnabled(false);
+        ImageIcon image = new ImageIcon(getClass().getResource("/images/pokedex.png"));
+        this.labelPokeball.setIcon(getScaledImage(image, 50, 50));
 
+        this.pack();
 
         buttonNew.addActionListener(new ActionListener() {
             @Override
@@ -61,18 +72,27 @@ public class Screen extends JFrame {
             }
         });
 
+        buttonDelete.addActionListener(new ActionListener() {              // Action to delete
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deletePokemon();
+            }
+        });
     }
 
     public  void buttomNewClick(ActionEvent e){
-        Pokemon p = new Pokemon(
-                textName.getText(),
-                textType.getText(),
-                textPokeNumber.getText(),
-                textDateOfCatch.getText()
-        );
-        pokemons.add(p);
-        refreshPokemonList();
-
+        try {
+            int PokeNumber = Integer.parseInt(textPokeNumber.getText());
+            Pokemon p = new Pokemon(
+                    textName.getText(),
+                    textType.getText(),
+                    PokeNumber,
+                    textDateOfCatch.getText()
+            );
+            addPokemon(p);
+        }catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void buttonSavedClick(ActionEvent e){
@@ -81,22 +101,35 @@ public class Screen extends JFrame {
             Pokemon p = pokemons.get(personNumber);
             p.setName(textName.getText());
             p.setType(textType.getText());
-            p.setPokeNumber(textPokeNumber.getText());
+            try {
+                p.setPokeNumber(Integer.parseInt(textPokeNumber.getText()));
+            }catch(Exception ex) {
+                ex.printStackTrace();
+            }
             p.setDateOfCatch(textDateOfCatch.getText());   // String
             refreshPokemonList();
         }
     }
 
     public void listPokemonSelection(ListSelectionEvent e){
-        int personNumber = listPokemon.getSelectedIndex();     // give the number of the item that you clicked
-        if(personNumber >= 0){
-            Pokemon p = pokemons.get(personNumber);
+        int index = listPokemon.getSelectedIndex();     // give the number of the item that you clicked
+        if(index >= 0){
+            Pokemon p = pokemons.get(index);
             textName.setText(p.getName());
             textType.setText(p.getType());
-            textPokeNumber.setText(p.getPokeNumber());
+            textPokeNumber.setText(Integer.toString(p.getPokeNumber()));
             textDateOfCatch.setText(p.getDateOfCatch().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));   //Local date
             labelTime.setText(Integer.toString(p.getTime()) + " years");
             buttonSave.setEnabled(true);
+
+            try {
+                URL url = new URL(this.pokedexImagesUrl + p.getPokeNumber() +".png");
+                BufferedImage image = ImageIO.read(url);
+                this.labelPokemonImage.setIcon(new ImageIcon(image));
+            } catch (IOException ex) {
+                ImageIcon image = new ImageIcon(getClass().getResource("/images/notFound.png"));
+                this.labelPokemonImage.setIcon(getScaledImage(image, 96, 96));
+            }
 
         }else{
             buttonSave.setEnabled(false);
@@ -116,27 +149,46 @@ public class Screen extends JFrame {
 
     public void addPokemon(Pokemon p){
         pokemons.add(p);
+        sortPokemons();
         refreshPokemonList();
+        listPokemon.setSelectedIndex(0);
+    }
+
+    private void sortPokemons() {
+        pokemons.sort((a,b) -> {
+            if (a.getPokeNumber() > b.getPokeNumber()) return 1;
+            else return -1;
+        });
+    }
+
+    public void deletePokemon() {
+        int index = listPokemon.getSelectedIndex();
+        pokemons.remove(index);
+        refreshPokemonList();
+    }
+
+    private ImageIcon getScaledImage(ImageIcon srcImg, int w, int h){
+        Image image = srcImg.getImage(); // transform it
+        Image newimg = image.getScaledInstance(w, h,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        ImageIcon imageIcon = new ImageIcon(newimg);
+        return imageIcon;
     }
 
     public static void main(String[] args) {
         Screen screen = new Screen();
         screen.setVisible(true);
 
-        Pokemon pikachu = new Pokemon("Pikachu storm Junior", "lightning", "0001", "12/01/1999");
-        Pokemon charizard = new Pokemon("Charizard owo", "Fire", "0002", "01/03/2019");
-        Pokemon Jigllypuff = new Pokemon("Jigllypuff ffff", "Fairy", "003", "01/01/2020");
-        Pokemon entei = new Pokemon("Entei u-u", "Fire", "130", "06/10/2021");
-        Pokemon magikarp = new Pokemon("Magikarp", "Water", "120", "02/12/2015");
-        Pokemon giratinna = new Pokemon("Giratinna", "Grass", "133 0004", "17/05/2017");
-        Pokemon abraa = new Pokemon("Abraa Kadabra", "Psychic / Iron ", "555 0005", "17/12/2000");
+        Pokemon pikachu = new Pokemon("Pikachu storm Junior", "lightning", 1, "12/01/1999");
+        Pokemon charizard = new Pokemon("Charizard owo", "Fire", 2, "01/03/2019");
+        Pokemon Jigllypuff = new Pokemon("Jigllypuff ffff", "Fairy", 3, "01/01/2020");
+        Pokemon entei = new Pokemon("Entei u-u", "Fire", 4, "06/10/2021");
+        Pokemon magikarp = new Pokemon("Magikarp", "Water", 5, "02/12/2015");
+        Pokemon giratinna = new Pokemon("Giratinna", "Grass", 6, "17/05/2017");
+        Pokemon abraa = new Pokemon("Abraa Kadabra", "Psychic / Iron ", 7, "17/12/2000");
 
-        screen.addPokemon(pikachu);
         screen.addPokemon(charizard);
+        screen.addPokemon(pikachu);
         screen.addPokemon(Jigllypuff);
         screen.addPokemon(magikarp);
     }
-
-
-
 }

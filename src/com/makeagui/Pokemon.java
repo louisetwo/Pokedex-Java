@@ -7,17 +7,17 @@ import java.time.format.DateTimeFormatter;
 public class Pokemon {
     private String name;
     private String type;
-    private String pokeNumber;
+    private int pokeNumber;
     private LocalDate dateOfCatch;
 
-    public Pokemon(String name, String type, String pokeNumber, LocalDate dateOfCatch) {
+    public Pokemon(String name, String type, int pokeNumber, LocalDate dateOfCatch) {
         this.name = name;
         this.type = type;
         this.pokeNumber = pokeNumber;
         this.dateOfCatch = dateOfCatch;
     }
 
-    public Pokemon(String name, String type, String pokeNumber, String dateOfCatch) {
+    public Pokemon(String name, String type, int pokeNumber, String dateOfCatch) {
         this.name = name;
         this.type = type;
         this.pokeNumber = pokeNumber;
@@ -42,11 +42,11 @@ public class Pokemon {
         this.type = type;
     }
 
-    public String getPokeNumber() {
+    public int getPokeNumber() {
         return pokeNumber;
     }
 
-    public void setPokeNumber(String pokeNumber) {
+    public void setPokeNumber(int pokeNumber) {
         this.pokeNumber = pokeNumber;
     }
 
