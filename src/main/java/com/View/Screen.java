@@ -35,6 +35,7 @@ public class Screen extends JFrame {
     private JButton buttonDelete;
     private JLabel labelPokeball;
     private JLabel labelPokemonImage;
+    private JLabel labelTrainer;
     private  DefaultListModel listPokemonModel;
     private String pokedexImagesUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
     private final PokemonDAO<Pokemon> pokemonDAO; // conexão com a tabela de pokemon no banco
@@ -45,7 +46,7 @@ public class Screen extends JFrame {
     // Colours   https://www.schemecolor.com/pokemon-colors.php
 
     Screen(){          // Constructor
-        super("My pokedex owo ");  // Contrutor do Jframe quer o titulo para o que queremos na janela
+        super("My pokedex òwó  ");  // Contrutor do Jframe quer o titulo para o que queremos na janela
         pokemonDAO = new PokemonDAO<Pokemon>();
         pokedexDAO = new PokedexDAO<Pokedex>();
         pokedexDAO.saveOrUpdate(pokedex);
@@ -56,6 +57,7 @@ public class Screen extends JFrame {
         buttonSave.setEnabled(false);
         ImageIcon image = new ImageIcon(getClass().getResource("/images/pokedex.png"));
         this.labelPokeball.setIcon(getScaledImage(image, 50, 50));
+        this.labelTrainer.setText("Trainer: " + pokedex.getPokemonTrainer());
 
         this.pack();
 
@@ -116,6 +118,7 @@ public class Screen extends JFrame {
                 ex.printStackTrace();
             }
             p.setDateOfCatch(textDateOfCatch.getText());   // String
+            pokemonDAO.saveOrUpdate(p);
             refreshPokemonList();
         }
     }

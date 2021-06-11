@@ -7,7 +7,7 @@ import javax.persistence.EntityTransaction;
 import org.hibernate.Session;
 
 /**
- * Classe responsável por gerenciar o banco de dados
+ * Classe responsável por gerenciar o banco de dados                         //  Data Access Object - DAO
  * @param <T>
  */
 public class GenericDAO<T extends EntidadeBase> {
