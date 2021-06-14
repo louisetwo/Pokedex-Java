@@ -36,6 +36,7 @@ public class Screen extends JFrame {
     private JLabel labelPokeball;
     private JLabel labelPokemonImage;
     private JLabel labelTrainer;
+    private JLabel labelBackground;
     private  DefaultListModel listPokemonModel;
     private String pokedexImagesUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
     private final PokemonDAO<Pokemon> pokemonDAO; // conexão com a tabela de pokemon no banco
@@ -58,6 +59,10 @@ public class Screen extends JFrame {
         ImageIcon image = new ImageIcon(getClass().getResource("/images/pokedex.png"));
         this.labelPokeball.setIcon(getScaledImage(image, 50, 50));
         this.labelTrainer.setText("Trainer: " + pokedex.getPokemonTrainer());
+
+        //ImageIcon imageBackground = new ImageIcon(getClass().getResource("/images/pokebar.png"));
+        //this.labeltoptop.setIcon(getScaledImage(imageBackground, 100, 400));
+
 
         this.pack();
 
@@ -175,8 +180,12 @@ public class Screen extends JFrame {
 
     public void deletePokemon() {
         int index = listPokemon.getSelectedIndex();
+        Pokemon p = pokedex.getPokemons().get(index);
+        pokemonDAO.remove(Pokemon.class, p.getId());
         pokedex.getPokemons().remove(index);
         refreshPokemonList();
+        listPokemon.setSelectedIndex(0);
+
     }
 
     private ImageIcon getScaledImage(ImageIcon srcImg, int w, int h){
