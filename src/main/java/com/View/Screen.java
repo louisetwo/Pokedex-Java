@@ -46,12 +46,12 @@ public class Screen extends JFrame {
     // Colours   https://www.schemecolor.com/pokemon-colors.php
 
     Screen(){          // Constructor
-        super("My pokedex òwó  ");  // Contrutor do Jframe quer o titulo para o que queremos na janela
+        super("My pokedex òwó  ");  //  Jframe constructor
         pokemonDAO = new PokemonDAO<Pokemon>();
         pokedexDAO = new PokedexDAO<Pokedex>();
         pokedexDAO.saveOrUpdate(pokedex);
         this.setContentPane(this.panelMain);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // O que o programa faz quando clica no iconde de fechar janela - Sair quando clicar
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //  exit when clicked
         listPokemonModel = new DefaultListModel();
         listPokemon.setModel(listPokemonModel);
         buttonSave.setEnabled(false);
